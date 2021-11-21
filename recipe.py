@@ -9,7 +9,7 @@ import time
 class BadInputError(Exception):
     pass
 
-class Player():
+class Player:
 
     def __init__(self, name):
         self.id = None
@@ -140,7 +140,7 @@ class Player():
     def __repr__(self):
         return '({},{})'.format(self.name, self.points)
 
-class Hand():
+class Hand:
     ''''deck' (Deck) : Card's Color (rgby)
        'numberOfCards' (int) : Card's Value (0-9, R, X, W, +2, +4)'''
 
@@ -216,7 +216,7 @@ class Hand():
     def indexCard(self, card):
         return self.hand.index(card)
 
-class GameSettings():
+class GameSettings:
     
     playerIdentities = ('play1','play2','play3','play4')
     computerNames = ('Watson','SkyNet','Hal','Metal Gear')
@@ -336,7 +336,7 @@ class GameSettings():
     def getMainMenuElements(self):
         return self.mainMenuElements
 
-class Deck():
+class Deck:
     ''''shuffle' (bool) : shuffle deck.'''
 
     colors =     ('red','yellow','green','blue')
@@ -515,7 +515,7 @@ class ComputerPlayer(Player):
                 bestColorNum = self.colorsInHand[color]
         return bestColor
 
-class Card():
+class Card:
     '''
     'suit' (string) : Card's Color (rgby)
     'rank' (string) : Card's Value (0-9, R, X, W, +2, +4)
@@ -715,7 +715,7 @@ class Card():
     def isZero(self):
         return self.zero
     
-class Match():
+class Match:
 
     elementsInit = {
         ### Names (final) ###
