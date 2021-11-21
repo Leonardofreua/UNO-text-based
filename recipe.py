@@ -16,24 +16,24 @@ class Player:
         self.name = name
         self.type = 'Human'
         self.hand = Hand()
-        self.legalCards = []
-        self.wildCards = []
-        self.valueChangeCards = []
-        self.zeroCards = []
-        self.canSkip = False
-        self.canReverse = False
-        self.canDrawTwo = False
-        self.canDrawFour = False
-        self.canValueChange = False
+        self.legal_cards = []
+        self.wild_cards = []
+        self.value_change_cards = []
+        self.zero_cards = []
+        self.can_skip = False
+        self.can_reverse = False
+        self.can_draw_two = False
+        self.can_draw_four = False
+        self.can_value_change = False
         self.drew = False
-        self.scrollMax = 0
+        self.scroll_max = 0
         self.points = 0
-        self.forceDraw = 0
+        self.force_draw = 0
 
     def addCard(self, card):
         self.drew = True
-        if self.forceDraw > 0:
-            self.forceDraw -= 1
+        if self.force_draw > 0:
+            self.force_draw -= 1
             self.drew = False
         self.hand.addCard(card)
         
@@ -43,50 +43,50 @@ class Player:
     def didDraw(self):
         return self.drew
         
-    def getLegalCards(self, color, value, zeroChange=False):
-        self.canSkip = False
-        self.canReverse = False
-        self.canDrawTwo = False
-        self.canDrawFour = False
-        self.canValueChange = False
-        self.canZeroChange = False
-        self.legalCards = []
-        self.wildCards = []
-        self.valueChangeCards = []
-        self.zeroCards = []
-        plusFours = []
+    def getLegalCards(self, color, value, zero_change=False):
+        self.can_skip = False
+        self.can_reverse = False
+        self.can_draw_two = False
+        self.can_draw_four = False
+        self.can_value_change = False
+        self.can_zero_change = False
+        self.legal_cards = []
+        self.wild_cards = []
+        self.value_change_cards = []
+        self.zero_cards = []
+        plus_fours = []
         for card in self.hand:
             if card.isWild():
                 if card.getValue() == '+4':
-                    plusFours.append(card)
+                    plus_fours.append(card)
                 else:
-                    self.wildCards.append(card)
-            elif zeroChange and card.isZero():
-                self.canZero = True
-                self.zeroCards.append(card)
+                    self.wild_cards.append(card)
+            elif zero_change and card.isZero():
+                self.can_zero = True
+                self.zero_cards.append(card)
             elif card.getColor() == color or card.getValue() == value:
                 if card.getColor() != color:
-                    self.canValueChange = True
-                    self.valueChangeCards.append(card)
+                    self.can_value_change = True
+                    self.value_change_cards.append(card)
                 if card.getValue() == "+2":
-                    self.canDrawTwo = True
+                    self.can_draw_two = True
                 elif card.getValue() == 'R':
-                    self.canReverse = True
+                    self.can_reverse = True
                 elif card.getValue() == 'X':
-                    self.canSkip = True
-                self.legalCards.append(card)
-        if len(self.legalCards) == 0 and len(plusFours) > 0:
-            self.canDrawFour = True
-            self.wildCards += plusFours
+                    self.can_skip = True
+                self.legal_cards.append(card)
+        if len(self.legal_cards) == 0 and len(plus_fours) > 0:
+            self.can_draw_four = True
+            self.wild_cards += plus_fours
                 
     def getValidCards(self):
-        return self.legalCards
+        return self.legal_cards
     
     def getAllValidCards(self):
-        return self.legalCards + self.wildCards + self.zeroCards
+        return self.legal_cards + self.wild_cards + self.zero_cards
                 
     def hasLegalCard(self):
-        return len(self.legalCards) > 0
+        return len(self.legal_cards) > 0
         
     def addPoints(self, amount):
         if (self.points + amount) <= 999999999999999999999:
@@ -113,20 +113,20 @@ class Player:
     def getCardNum(self):
         return len(self.hand)
 
-    def getHand(self, scrollNum=0, hide=False):
-        return self.hand.show(scrollNum, hide)
+    def getHand(self, scroll_num=0, hide=False):
+        return self.hand.show(scroll_num, hide)
     
     def getForceDraws(self):
-        return self.forceDraw
+        return self.force_draw
     
     def addForceDraw(self, num):
-        self.forceDraw += num
+        self.force_draw += num
     
     def decreaseForceDraw(self):
-        self.forceDraw -= 1
+        self.force_draw -= 1
         
     def removeForceDraw(self):
-        self.forceDraw = 0
+        self.force_draw = 0
 
     def checkCard(self, index):
         return self.hand.getCard(int(index))
@@ -144,10 +144,10 @@ class Hand:
     ''''deck' (Deck) : Card's Color (rgby)
        'numberOfCards' (int) : Card's Value (0-9, R, X, W, +2, +4)'''
 
-    def __init__(self, deck=None,numberOfCards=0):
+    def __init__(self, deck=None, number_of_cards=0):
         self.hand = []
         if deck != None:
-            self.draw(deck,numberOfCards)
+            self.draw(deck, number_of_cards)
 
     def __iter__(self):
         return iter(self.hand)
@@ -183,12 +183,12 @@ class Hand:
         lower +=    ('\033[97m|<-|\033[0m ')
         footer +=   ('\033[97m\u2666--\u2666\033[0m ')
         for i in range(10):
-            indexNum = i+(10*scrollNum)
-            if indexNum < len(self):
-                header += (self[indexNum].getRow(0,hide)+' ')
-                upper += (self[indexNum].getRow(1,hide)+' ')
-                lower += (self[indexNum].getRow(2,hide)+' ')
-                footer += (self[indexNum].getRow(3,hide)+' ')
+            index_num = i+(10*scrollNum)
+            if index_num < len(self):
+                header += (self[index_num].getRow(0,hide)+' ')
+                upper += (self[index_num].getRow(1,hide)+' ')
+                lower += (self[index_num].getRow(2,hide)+' ')
+                footer += (self[index_num].getRow(3,hide)+' ')
                 num += 1
         for j in range(10-num):
             j #unused
@@ -218,69 +218,69 @@ class Hand:
 
 class GameSettings:
     
-    playerIdentities = ('play1','play2','play3','play4')
-    computerNames = ('Watson','SkyNet','Hal','Metal Gear')
+    player_identities = ('play1','play2','play3','play4')
+    computer_names = ('Watson','SkyNet','Hal','Metal Gear')
     
     def __init__(self):
-        self.playerStaging = []                  #    Where Player Objs Are Stored Before Game Starts
+        self.player_staging = []                  #    Where Player Objs Are Stored Before Game Starts
         self.players = {}                        #    ID : Player Obj
-        self.numPlayers = 0
-        self.useColor = True 
-        self.displayEffects = True
-        self.hideComputerHands = True
-        self.zeroChange = False
-        self.computerSimulation = False
-        self.mainMenuError = ''
-        self.computerSpeed = 'normal'
+        self.num_players = 0
+        self.use_color = True 
+        self.display_effects = True
+        self.hide_computer_hands = True
+        self.zero_change = False
+        self.computer_simulation = False
+        self.main_menu_error = ''
+        self.computer_speed = 'normal'
         
     def canAddPlayer(self):
-        return (self.numPlayers < 4)
+        return (self.num_players < 4)
     
     def canRemovePlayer(self):
-        return (self.numPlayers > 0)
+        return (self.num_players > 0)
     
     def canBegin(self):
-        return (self.numPlayers > 1)
+        return (self.num_players > 1)
         
     def addPlayer(self, player):
-        self.playerStaging.append(player)
-        self.numPlayers += 1
+        self.player_staging.append(player)
+        self.num_players += 1
         
     def removePlayer(self, number):
         number -= 1
-        del self.playerStaging[number]
-        self.numPlayers -= 1
+        del self.player_staging[number]
+        self.num_players -= 1
         
     def clearStaging(self):
-        self.numPlayers = 0
-        self.playerStaging = []
+        self.num_players = 0
+        self.player_staging = []
         
     def finalizePlayers(self):
         self.players.clear()
         identity = 0
-        for player in self.playerStaging:
-            playerID = self.playerIdentities[identity]
-            player.assignID(playerID)
-            self.players[playerID] = player
+        for player in self.player_staging:
+            player_id = self.player_identities[identity]
+            player.assignID(player_id)
+            self.players[player_id] = player
             identity += 1
         
     def getPlayerNum(self):
-        return self.numPlayers
+        return self.num_players
     
     def getComputerName(self):
         complete = False
-        index = self.numPlayers
+        index = self.num_players
         while not complete:
-            name = self.computerNames[index]
+            name = self.computer_names[index]
             complete = True
-            for player in self.playerStaging:
+            for player in self.player_staging:
                 if player.getName() == name:
                     index += 1
-                    if index >= len(self.computerNames):
+                    if index >= len(self.computer_names):
                         index = 0
                         complete = False
             
-        return self.computerNames[index]
+        return self.computer_names[index]
     
     def getRandomIdentity(self):
         '''For Getting a Random Player for First Turn.'''
@@ -290,15 +290,15 @@ class GameSettings:
         def getBlankSpace(word, total):
             return " "*(total-len(word))
         
-        def getPlayerBox(playerNum, rowNum):
-            if rowNum == 1:
-                name = self.playerStaging[playerNum-1].getName()
+        def getPlayerBox(player_num, row_num):
+            if row_num == 1:
+                name = self.player_staging[player_num-1].getName()
                 return '{}{}'.format(name, getBlankSpace(name, 29))
-            elif rowNum == 2:
-                points = self.playerStaging[playerNum-1].getPoints()
+            elif row_num == 2:
+                points = self.player_staging[player_num-1].getPoints()
                 return 'Points: {}{}'.format(points, getBlankSpace(str(points), 21))
                 
-        self.mainMenuElements= {'play1row1':'No Player                    ','play1row2':'                             ',
+        self.main_menu_elements= {'play1row1':'No Player                    ','play1row2':'                             ',
                                 'play2row1':'No Player                    ',
                                 'play2row2':'                             ',
                                 'play3row1':'No Player                    ','play3row2':'                             ',
@@ -307,34 +307,34 @@ class GameSettings:
                                 'play1box':'\033[90m','play2box':'\033[90m','play3box':'\033[90m','play4box':'\033[90m',
                                 'beginBox':'\033[90m','addBox':'\033[97m','removeBox':'\033[90m'
                                 }
-        playerBoxKey = 'play{}box'
-        playerRowKey = 'play{}row{}'
+        player_box_key = 'play{}box'
+        player_row_key = 'play{}row{}'
         i = 1
-        for j in self.playerStaging:
+        for j in self.player_staging:
             j
             colorCode = ['\033[91m','\033[94m','\033[92m','\033[93m']
-            key = playerBoxKey.format(i)
-            self.mainMenuElements[key] = colorCode[i-1]
-            self.mainMenuElements[playerRowKey.format(i,1)] = getPlayerBox(i, 1)
-            self.mainMenuElements[playerRowKey.format(i,2)] = getPlayerBox(i, 2)
+            key = player_box_key.format(i)
+            self.main_menu_elements[key] = colorCode[i-1]
+            self.main_menu_elements[player_row_key.format(i,1)] = getPlayerBox(i, 1)
+            self.main_menu_elements[player_row_key.format(i,2)] = getPlayerBox(i, 2)
             i+=1
         if self.canBegin():
-            self.mainMenuElements['beginBox'] = '\033[95m'
+            self.main_menu_elements['beginBox'] = '\033[95m'
         if not self.canAddPlayer():
-            self.mainMenuElements['addBox'] = '\033[90m'
+            self.main_menu_elements['addBox'] = '\033[90m'
         if self.canRemovePlayer():
-            self.mainMenuElements['removeBox'] = '\033[97m'
+            self.main_menu_elements['removeBox'] = '\033[97m'
             
     def changeComputerSpeed(self):
-        if self.computerSpeed == 'slow':
-            self.computerSpeed = 'normal'
-        elif self.computerSpeed == 'normal':
-            self.computerSpeed = 'fast'
-        elif self.computerSpeed == 'fast':
-            self.computerSpeed = 'slow'
+        if self.computer_speed == 'slow':
+            self.computer_speed = 'normal'
+        elif self.computer_speed == 'normal':
+            self.computer_speed = 'fast'
+        elif self.computer_speed == 'fast':
+            self.computer_speed = 'slow'
     
     def getMainMenuElements(self):
-        return self.mainMenuElements
+        return self.main_menu_elements
 
 class Deck:
     ''''shuffle' (bool) : shuffle deck.'''
@@ -388,132 +388,132 @@ class ComputerPlayer(Player):
         super().__init__(name)
         self.type = 'Computer'
         self.begun = False
-        self.colorsInHand = {'red':0, 'blue':0, 'green':0, 'yellow':0, 'wild':0}
-        self.colorsOutHand = {}
-        self.currentColor = ""
+        self.colors_in_hand = {'red':0, 'blue':0, 'green':0, 'yellow':0, 'wild':0}
+        self.colors_out_hand = {}
+        self.current_color = ""
         
     def addCard(self, card):
         Player.addCard(self, card)
         color = card.getColor()
-        self.colorsInHand[color] += 1
+        self.colors_in_hand[color] += 1
         
-    def indexCard(self, cardColor, cardValue):
+    def indexCard(self, card_color, card_value):
         for card in self.hand:
-            if card.getValue() == cardValue:
-                if cardValue in ('+4', 'W'):
+            if card.getValue() == card_value:
+                if card_value in ('+4', 'W'):
                     return self.hand.indexCard(card)
                 else:
-                    if card.getColor() == cardColor:
+                    if card.getColor() == card_color:
                         return self.hand.indexCard(card)
         raise ValueError("Card Cannot Be Found")
         
     def think(self, match):
         card = None
-        self.currentColor = match.currentColor
-        currentValue = match.currentValue
-        zeroChangeRule = match.zeroChange
-        twoPlayers = False
-        previousTurnID = match.getNextTurn(True)
-        nextTurnID = match.getNextTurn(False)
-        previousPlayer = match.getPlayer(previousTurnID)
+        self.current_color = match.current_color
+        current_value = match.current_value
+        zero_change_rule = match.zero_change
+        two_players = False
+        previous_turn_id = match.getNextTurn(True)
+        next_turn_id = match.getNextTurn(False)
+        previous_player = match.getPlayer(previous_turn_id)
         #nextPlayer = match.getPlayer(nextTurnID)
-        if previousTurnID == nextTurnID:
-            twoPlayers = True
-            if self.canSkip == False and self.canReverse == True:
-                self.canSkip = True
-            self.canReverse = False
+        if previous_turn_id == next_turn_id:
+            two_players = True
+            if self.can_skip == False and self.can_reverse == True:
+                self.can_skip = True
+            self.can_reverse = False
         
-        self.getLegalCards(self.currentColor, currentValue, zeroChangeRule)
+        self.getLegalCards(self.current_color, current_value, zero_change_rule)
 
         ### DRAW CASE ###
         
-        if len(self.legalCards) == 0 and len(self.wildCards) == 0:
+        if len(self.legal_cards) == 0 and len(self.wild_cards) == 0:
             return "d"
         
         else:
             
             ### NO LEGAL CARD, USE WILD CARD ###
             
-            if len(self.legalCards) == 0:
+            if len(self.legal_cards) == 0:
                 
-                if zeroChangeRule and self.canZeroChange:
-                    bestZeroColor = self.getBestColor(self.zeroCards)
-                    card = self.getCardByColor(self.zeroCards, bestZeroColor)
+                if zero_change_rule and self.can_zero_change:
+                    best_zero_color = self.getBestColor(self.zero_cards)
+                    card = self.getCardByColor(self.zero_cards, best_zero_color)
                     
                 else:
                     
-                    if self.canDrawFour:
-                        card = self.getCardByValue(self.wildCards, "+4")
+                    if self.can_draw_four:
+                        card = self.getCardByValue(self.wild_cards, "+4")
                         print(card)
                         
                     else:
-                        card = random.choice(self.wildCards)
+                        card = random.choice(self.wild_cards)
                 
             else:
                 
                 ### HAS LEGAL CARD ###
                 
-                if twoPlayers and self.canSkip: #Always play a skip card in a two player game
+                if two_players and self.can_skip: #Always play a skip card in a two player game
                     #print("Shed Skip Strategy")
-                    card = self.getCardByValue(self.legalCards,"R", "X")
+                    card = self.getCardByValue(self.legal_cards,"R", "X")
                     
-                if self.canReverse and previousPlayer.didDraw():
+                if self.can_reverse and previous_player.didDraw():
                     #print("Reverse Strategy")
-                    reverseCards = self.getAllCardsByValue(self.legalCards, "R")
-                    for reverseCard in reverseCards:
-                        if reverseCard.getColor() == self.currentColor:
-                            card = reverseCard
+                    reverse_cards = self.getAllCardsByValue(self.legal_cards, "R")
+                    for reverse_card in reverse_cards:
+                        if reverse_card.getColor() == self.current_color:
+                            card = reverse_card
                     
-                if self.canValueChange:
+                if self.can_value_change:
                     # Computer Can Value Change, However, Should it?
                     # Computer Checks to See if Value Change Color is Better Than Current
-                    currentColorNum = self.colorsInHand[self.currentColor]
-                    bestValueChangeColor = self.getBestColor(self.valueChangeCards)
-                    if self.colorsInHand[bestValueChangeColor] > currentColorNum or len(self.valueChangeCards) == len(self.legalCards):
-                        card = self.getCardByColor(self.valueChangeCards, bestValueChangeColor)
+                    current_color_num = self.colors_in_hand[self.current_color]
+                    best_value_change_color = self.getBestColor(self.value_change_cards)
+                    if self.colors_in_hand[best_value_change_color] > current_color_num or len(self.value_change_cards) == len(self.legal_cards):
+                        card = self.getCardByColor(self.value_change_cards, best_value_change_color)
                     
                     
                 if card == None:
                     #print("Random Strategy")
-                    card = random.choice(list(set(self.legalCards) - set(self.valueChangeCards)))
+                    card = random.choice(list(set(self.legal_cards) - set(self.value_change_cards)))
             
         color = card.getColor()
-        self.colorsInHand[color] -= 1
+        self.colors_in_hand[color] -= 1
         return str(self.indexCard(card.getColor(), card.getValue()))
     
     def getWildColor(self):
-        maxKey = max(self.colorsInHand, key=self.colorsInHand.get)
-        if maxKey == 'wild':
+        max_key = max(self.colors_in_hand, key=self.colors_in_hand.get)
+        if max_key == 'wild':
             return random.choice(('r','g','b','y'))
         else:
-            return maxKey
+            return max_key
         
-    def getCardByValue(self, cardList, *values):
-        for card in cardList:
+    def getCardByValue(self, card_list, *values):
+        for card in card_list:
             if card.getValue() in values:
                 return card
             
-    def getAllCardsByValue(self, cardList, *values):
+    def getAllCardsByValue(self, card_list, *values):
         cards = []
-        for card in cardList:
+        for card in card_list:
             if card.getValue() in values:
                 cards.append(card)
         return cards
     
-    def getCardByColor(self, cardList, *colors):
-        for card in cardList:
+    def getCardByColor(self, card_list, *colors):
+        for card in card_list:
             if card.getColor() in colors:
                 return card
     
-    def getBestColor(self, cardList):
-        bestColor = None
-        bestColorNum = 0
-        for card in cardList:
+    def getBestColor(self, card_list):
+        best_color = None
+        best_color_num = 0
+        for card in card_list:
             color = card.getColor()
-            if self.colorsInHand[color] > bestColorNum:
-                bestColor = color
-                bestColorNum = self.colorsInHand[color]
-        return bestColor
+            if self.colors_in_hand[color] > best_color_num:
+                best_color = color
+                best_color_num = self.colors_in_hand[color]
+        return best_color
 
 class Card:
     '''
@@ -540,13 +540,13 @@ class Card:
         'dwhite'     :   '\033[37m',
     }
     
-    idMap = {
+    id_map = {
         'red':'R','blue':'B','green':'G','yellow':'Y','wild':'W',
         '0':'0','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9',
         '+2':'+','R':'R','W':'W','+4':'$','X':'X'
     }
 
-    bigNums = {
+    big_nums = {
         "0" : [" .d888b. ","d88P Y88b","888   888","888   888","888   888","888   888","d88P Y88b"," \"Y888P\" "],
         "1" : ["  d888   "," d8888   ","   888   ","   888   ","   888   ","   888   ","   888   "," 8888888 "],
         "2" : [".d8888b. ","d88P  Y88","d8    888","    .d88P",".od888P\" ","d88P\"    ","888\"     ","888888888"],
@@ -578,7 +578,7 @@ class Card:
         '''Initializes Uno Card w/ Color and Value.'''
         self.wild = False       #Is wild card?
         self.zero = False
-        self.cardID = '{}{}'.format(self.idMap[color],self.idMap[value])
+        self.card_id = '{}{}'.format(self.id_map[color],self.id_map[value])
         self.setColor(color)
         self.setValue(value)
         self.setPoints(value)
@@ -591,21 +591,21 @@ class Card:
     def __repr__(self):
         return "{},{}".format(self.color, self.value)
 
-    def getBigNum(self, reverse, reverseSeed=0):
+    def getBigNum(self, reverse, reverse_seed=0):
         '''Returns list of strings to draw card's value on the pile.'''
-        bigNums = []
-        colorCode = self.colorCode
-        colorCodeDark = self.colorCodeDark
+        big_nums = []
+        color_code = self.color_code
+        color_code_dark = self.color_code_dark
         value = self.value
         if value == 'R':
             if not reverse:
-                value += str(reverseSeed)
+                value += str(reverse_seed)
             else:
-                value += str(9-reverseSeed)
-        for mid in self.bigNums[value]:
-            bigNums += ['{}| |{}'.format(colorCode,colorCodeDark)+mid+'{}| |\033[0m\t'.format(colorCode)]
+                value += str(9-reverse_seed)
+        for mid in self.big_nums[value]:
+            big_nums += ['{}| |{}'.format(color_code,color_code_dark)+mid+'{}| |\033[0m\t'.format(color_code)]
             
-        return bigNums
+        return big_nums
 
     def getColor(self):
         '''Returns card's color.'''
@@ -613,7 +613,7 @@ class Card:
     
     def getColorCode(self):
         '''Returns card's color code.'''
-        return self.colorCode
+        return self.color_code
 
     def getValue(self):
         '''Returns card's value.'''
@@ -623,36 +623,36 @@ class Card:
         '''Returns card's point value.'''
         return self.points
     
-    def getRow(self,rowNum,hide=False):
+    def getRow(self, row_num,hide=False):
         value = self.value
-        displaySpace = self.displaySpace
+        display_space = self.display_space
         if hide:
-            colorCode = '\033[97m'
+            color_code = '\033[97m'
             value = '?'
-            displaySpace = ' '
+            display_space = ' '
         else:
-            colorCode = self.colorCode
+            color_code = self.color_code
             if self.isWild():
-                if rowNum == 0:  
-                    colorCode = '\033[91m'
-                elif rowNum == 1:
-                    colorCode = '\033[93m'
-                elif rowNum == 2:
-                    colorCode = '\033[92m'
-                elif rowNum == 3:
-                    colorCode = '\033[94m'
+                if row_num == 0:  
+                    color_code = '\033[91m'
+                elif row_num == 1:
+                    color_code = '\033[93m'
+                elif row_num == 2:
+                    color_code = '\033[92m'
+                elif row_num == 3:
+                    color_code = '\033[94m'
         
-        if rowNum == 0:
-            return      '{}\u2666--\u2666\033[0m'.format(colorCode)
-        elif rowNum == 1:
-            return      '{}|{}{}|\033[0m'.format(colorCode, displaySpace, value)
-        elif rowNum == 2:
+        if row_num == 0:
+            return      '{}\u2666--\u2666\033[0m'.format(color_code)
+        elif row_num == 1:
+            return      '{}|{}{}|\033[0m'.format(color_code, display_space, value)
+        elif row_num == 2:
             if hide:
-                return   '{}|? |\033[0m'.format(colorCode)
+                return   '{}|? |\033[0m'.format(color_code)
             else:
-                return   '{}|  |\033[0m'.format(colorCode)
-        elif rowNum == 3:
-            return      '{}\u2666--\u2666\033[0m'.format(colorCode)
+                return   '{}|  |\033[0m'.format(color_code)
+        elif row_num == 3:
+            return      '{}\u2666--\u2666\033[0m'.format(color_code)
 
     #############################################
 
@@ -662,32 +662,32 @@ class Card:
         '''Sets Card's color and escape code.'''
         if color == 'blue':
             self.color = 'blue'
-            self.colorCode = self.colors['blue']
-            self.colorCodeDark = self.colors['dblue']
+            self.color_code = self.colors['blue']
+            self.color_code_dark = self.colors['dblue']
         elif color == 'red':
             self.color = 'red'
-            self.colorCode = self.colors['red']
-            self.colorCodeDark = self.colors['dred']
+            self.color_code = self.colors['red']
+            self.color_code_dark = self.colors['dred']
         elif color == 'yellow':
             self.color = 'yellow'
-            self.colorCode = self.colors['yellow']
-            self.colorCodeDark = self.colors['dyellow']
+            self.color_code = self.colors['yellow']
+            self.color_code_dark = self.colors['dyellow']
         elif color == 'green':
             self.color = 'green'
-            self.colorCode = self.colors['green']
-            self.colorCodeDark = self.colors['dgreen']
+            self.color_code = self.colors['green']
+            self.color_code_dark = self.colors['dgreen']
         elif color == 'wild':         #No color modification
             self.wild = True
             self.color = 'wild'
-            self.colorCodeDark = self.colors['dwild']
-            self.colorCode = self.colors['wild']
+            self.color_code_dark = self.colors['dwild']
+            self.color_code = self.colors['wild']
 
     def setValue(self, value):
         if value in ('0','1','2','3','4','5','6','7','8','9','X','R','+2','+4','W'):
             self.value = value
-            self.displaySpace = ' '
+            self.display_space = ' '
             if len(value) == 2:
-                self.displaySpace = ''
+                self.display_space = ''
             if value == '0':
                 self.zero = True
                 
@@ -717,7 +717,7 @@ class Card:
     
 class Match:
 
-    elementsInit = {
+    elements_init = {
         ### Names (final) ###
         'P1Name':'           ', 'P2Name':'           ', 'P3Name':'           ', 'P4Name':'           ',
         ### Card Values ### 
@@ -745,42 +745,42 @@ class Match:
         
         ### Player Information ###
         self.players = gs.players
-        self.turnList = []
-        self.handTitles =  {'play1':'','play2':'','play3':'','play4':''}
+        self.turn_list = []
+        self.hand_titles =  {'play1':'','play2':'','play3':'','play4':''}
         
         ### Carry Information ###
-        self.displayEffects = gs.displayEffects
-        self.hideComputerHands = gs.hideComputerHands
-        self.zeroChange = gs.zeroChange
-        self.computerSpeed = self.speeds[gs.computerSpeed]
-        self.simulation = gs.computerSimulation
+        self.display_effects = gs.display_effects
+        self.hide_computer_hands = gs.hide_computer_hands
+        self.zero_change = gs.zero_change
+        self.computer_speed = self.speeds[gs.computer_speed]
+        self.simulation = gs.computer_simulation
 
         ### Data ###
-        self.handPosition = 0               # For hand displays
-        self.drawAmount = 0                 # Used for force draws
+        self.hand_position = 0               # For hand displays
+        self.draw_amount = 0                 # Used for force draws
         self.passes = 0                     # Keep track of consecutive passes for emergency color change
-        self.passMax = 0                    # Max passes before color change
+        self.pass_max = 0                    # Max passes before color change
         self.turn = ''                      # Current turn
         self.event = ''                     # Wild, Reverse, Skip, etc
-        self.wildColorChange = ''           # Specifies color to change wild card to
-        self.currentColor = ''              # Current color
-        self.currentValue = ''              # Current value
-        self.winnerID = ''                  # ID of Player who Won
+        self.wild_color_change = ''           # Specifies color to change wild card to
+        self.current_color = ''              # Current color
+        self.current_value = ''              # Current value
+        self.winner_id = ''                  # ID of Player who Won
         self.reverse = False                # Is turn order reversed
-        self.turnComplete = False           # Is turn complete
-        self.matchComplete = False          # Is the Game over?
-        self.matchAbort = False             # Did the match conclude without a winner?
-        self.forcedWild = False             # Force change wild
+        self.turn_complete = False           # Is turn complete
+        self.match_complete = False          # Is the Game over?
+        self.match_abort = False             # Did the match conclude without a winner?
+        self.forced_wild = False             # Force change wild
 
         ### Initialize Names / Cards / Deck (Assuming New Game) ###
-        self.elements = dict(self.elementsInit)
+        self.elements = dict(self.elements_init)
         
-        keyStringName = 'P{}Name'
-        keyStringCards = 'P{}Cards'
+        key_string_name = 'P{}Name'
+        key_string_cards = 'P{}Cards'
         
         for i in self.players:
-            self.elements[keyStringName.format(i[-1])] = self.players[i].getName()+(' '*(11-len(self.players[i].getName())))
-            self.elements[keyStringCards.format(i[-1])] = '  '+(' '*(3-len(str(self.players[i].getCardNum()))))+str(self.players[i].getCardNum())+' Cards'
+            self.elements[key_string_name.format(i[-1])] = self.players[i].getName()+(' '*(11-len(self.players[i].getName())))
+            self.elements[key_string_cards.format(i[-1])] = '  '+(' '*(3-len(str(self.players[i].getCardNum()))))+str(self.players[i].getCardNum())+' Cards'
             
         self.elements['DNum'] = len(self.deck)
         
@@ -792,14 +792,14 @@ class Match:
             self.elements['Deck'][j] = '='
             j -= 1
                     
-        for key in GameSettings.playerIdentities:
+        for key in GameSettings.player_identities:
             try:
                 self.buildHandString(key)
-                self.turnList += [key]
+                self.turn_list += [key]
             except KeyError:
                 pass
             
-        self.passMax = len(self.turnList)
+        self.pass_max = len(self.turn_list)
             
     def clearShell(self):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -809,7 +809,7 @@ class Match:
         print(self.drawScreen())
         self.enterBreak()
         self.eventDealCards()
-        self.turn = random.choice(self.turnList)
+        self.turn = random.choice(self.turn_list)
         self.elements['Console'] = 'First turn will be {}. Press Enter.'.format(self.players[self.turn].getName())
         print(self.drawScreen(True))
         self.enterBreak()
@@ -821,138 +821,138 @@ class Match:
             self.eventReverse()
             
     def end(self, gs):
-        if not self.matchAbort:
+        if not self.match_abort:
             points = 0
             self.elements['P{}Turn'.format(self.turn[-1])] = ''
-            self.elements['Console'] = '{} Wins! Press Enter to Begin Point Tally'.format(self.players[self.winnerID].getName())
+            self.elements['Console'] = '{} Wins! Press Enter to Begin Point Tally'.format(self.players[self.winner_id].getName())
             print(self.drawScreen())
             self.enterBreak()
             
-            for identity in self.turnList:
-                if identity != self.winnerID:
+            for identity in self.turn_list:
+                if identity != self.winner_id:
                     self.turn = identity
-                    self.elements['HName'] = self.handTitles[self.turn]
+                    self.elements['HName'] = self.hand_titles[self.turn]
                     self.elements['P{}Turn'.format(self.turn[-1])] = '\033[93m'
                     while self.players[identity].getCardNum() > 0:
                         card = self.players[identity].removeCard(0)
                         points += card.getPoints()
-                        self.elements['Console'] = '{} Won {} Points!'.format(self.players[self.winnerID].getName(),points)
+                        self.elements['Console'] = '{} Won {} Points!'.format(self.players[self.winner_id].getName(),points)
                         
-                        keyStringCards = 'P{}Cards'
-                        self.elements[keyStringCards.format(identity[-1])] = '  '+(' '*(3-len(str(self.players[identity].getCardNum()))))+str(self.players[identity].getCardNum())+' Cards'
+                        key_string_cards = 'P{}Cards'
+                        self.elements[key_string_cards.format(identity[-1])] = '  '+(' '*(3-len(str(self.players[identity].getCardNum()))))+str(self.players[identity].getCardNum())+' Cards'
                         self.players[identity].maxScroll = math.ceil((self.players[identity].getCardNum() / 10)-1)
-                        if self.handPosition > self.players[identity].maxScroll:
-                            self.handPosition -= 1
+                        if self.hand_position > self.players[identity].maxScroll:
+                            self.hand_position -= 1
                         self.buildHandVisual(identity)
                         
-                        if self.displayEffects and not self.simulation:
+                        if self.display_effects and not self.simulation:
                             print(self.drawScreen())
                             time.sleep(.1)
                     self.elements['P{}Turn'.format(self.turn[-1])] = ''
                         
-            self.players[self.winnerID].addPoints(points)
-            self.elements['Console'] = '{} Won {} Points! Press Enter'.format(self.players[self.winnerID].getName(),points)
+            self.players[self.winner_id].addPoints(points)
+            self.elements['Console'] = '{} Won {} Points! Press Enter'.format(self.players[self.winner_id].getName(),points)
             print(self.drawScreen())
             self.enterBreak()
         
         gs.clearStaging()
-        for identity in self.turnList:
+        for identity in self.turn_list:
             self.players[identity].discardHand()
             gs.addPlayer(self.players[identity])
         return gs
         
-    def adjustCardAmount(self, playerID):
-        keyStringCards = 'P{}Cards'
-        self.elements[keyStringCards.format(playerID[-1])] = '  '+(' '*(3-len(str(self.players[playerID].getCardNum()))))+str(self.players[playerID].getCardNum())+' Cards'
-        self.players[playerID].maxScroll = math.ceil((self.players[playerID].getCardNum() / 10)-1)
-        if self.handPosition > self.players[playerID].maxScroll:
-            self.handPosition -= 1
-        self.buildHandVisual(playerID)
+    def adjustCardAmount(self, player_id):
+        key_string_cards = 'P{}Cards'
+        self.elements[key_string_cards.format(player_id[-1])] = '  '+(' '*(3-len(str(self.players[player_id].getCardNum()))))+str(self.players[player_id].getCardNum())+' Cards'
+        self.players[player_id].maxScroll = math.ceil((self.players[player_id].getCardNum() / 10)-1)
+        if self.hand_position > self.players[player_id].maxScroll:
+            self.hand_position -= 1
+        self.buildHandVisual(player_id)
 
-    def buildHandString(self, playerID):
-        playerName = self.players[playerID].getName()
-        if len(playerName) < 9:
-            self.handTitles[playerID] = "{}'s Hand\t".format(self.players[playerID].getName())
+    def buildHandString(self, player_id):
+        player_name = self.players[player_id].getName()
+        if len(player_name) < 9:
+            self.hand_titles[player_id] = "{}'s Hand\t".format(self.players[player_id].getName())
         else:
-            self.handTitles[playerID] = "{}'s Hand".format(self.players[playerID].getName())
+            self.hand_titles[player_id] = "{}'s Hand".format(self.players[player_id].getName())
 
-    def buildHandVisual(self, playerID):
+    def buildHandVisual(self, player_id):
         string = '['
-        for i in range(self.players[playerID].maxScroll+1):
-            if i == self.handPosition:
+        for i in range(self.players[player_id].maxScroll+1):
+            if i == self.hand_position:
                 string += '|'
             else:
                 string += '-'
         string += ']'
         self.elements['HVisual'] = string
 
-    def checkInput(self, playerInput):
-        if playerInput == '':
-            return {'valid':False,'entry':playerInput}
-        if playerInput.isnumeric():
-            if int(playerInput)+(10*self.handPosition) < self.players[self.turn].getCardNum():
-                return {'valid':True,'entry':str(int(playerInput)+(10*self.handPosition)),'type':'card'}
+    def checkInput(self, player_input):
+        if player_input == '':
+            return {'valid':False,'entry':player_input}
+        if player_input.isnumeric():
+            if int(player_input)+(10*self.hand_position) < self.players[self.turn].getCardNum():
+                return {'valid':True,'entry':str(int(player_input)+(10*self.hand_position)),'type':'card'}
             else:
-                self.elements['Error'] = '{} is not a card.'.format(playerInput)
-                return {'valid':False,'entry':playerInput}
+                self.elements['Error'] = '{} is not a card.'.format(player_input)
+                return {'valid':False,'entry':player_input}
         else:
-            playerInput = playerInput.lower()[0]
-            if playerInput in ['<','>','u','d','p','q','s']:
-                return {'valid':True,'entry':playerInput}
+            player_input = player_input.lower()[0]
+            if player_input in ['<','>','u','d','p','q','s']:
+                return {'valid':True,'entry':player_input}
             else:
-                self.elements['Error'] = '{} is not a valid selection.'.format(playerInput)
-                return {'valid':False,'entry':playerInput}
+                self.elements['Error'] = '{} is not a valid selection.'.format(player_input)
+                return {'valid':False,'entry':player_input}
 
-    def checkColorInput(self, playerInput):
-        if playerInput == '':
-            return {'valid':False,'entry':playerInput}
-        playerInput = str(playerInput).lower()[0]
-        if playerInput[0] == 'b':
+    def checkColorInput(self, player_input):
+        if player_input == '':
+            return {'valid':False,'entry':player_input}
+        player_input = str(player_input).lower()[0]
+        if player_input[0] == 'b':
             return {'valid':True,'entry':'blue'}
-        elif playerInput[0] == 'r':
+        elif player_input[0] == 'r':
             return {'valid':True,'entry':'red'}
-        elif playerInput[0] == 'g':
+        elif player_input[0] == 'g':
             return {'valid':True,'entry':'green'}
-        elif playerInput[0] == 'y':
+        elif player_input[0] == 'y':
             return {'valid':True,'entry':'yellow'}
-        return {'valid':False,'entry':playerInput}
+        return {'valid':False,'entry':player_input}
 
     def eventDealCards(self):
-        if self.displayEffects and not self.simulation:
+        if self.display_effects and not self.simulation:
             self.elements['Console'] = 'Dealing Cards...'
         for i in ('play1','play2','play3','play4'):
             if i in self.players:
                 for j in range(7):
                     j #unused
                     self.dealCard(i)
-                    if self.displayEffects and not self.simulation:
+                    if self.display_effects and not self.simulation:
                         print(self.drawScreen(True))
                         time.sleep(.1)
 
     def eventReverse(self):
-        if self.displayEffects and not self.simulation:
+        if self.display_effects and not self.simulation:
             hide = False
             if self.players[self.turn].getType() == "Computer":
-                hide = self.hideComputerHands
+                hide = self.hide_computer_hands
             self.elements['Console'] = "Reverse Card Played! Reversing Turn Order.".format(self.players[self.turn].getName())
             print(self.drawScreen(hide))
             time.sleep(1)
             for i in range(10):
-                cardBigNums = self.pile[0].getBigNum(self.reverse,i)
-                self.elements['oMiddle'] = cardBigNums
+                card_big_nums = self.pile[0].getBigNum(self.reverse,i)
+                self.elements['oMiddle'] = card_big_nums
                 print(self.drawScreen(hide))
-                if self.displayEffects and not self.simulation:
+                if self.display_effects and not self.simulation:
                     time.sleep(.1)
-        cardBigNums = self.pile[0].getBigNum(self.reverse,9)
-        self.elements['oMiddle'] = cardBigNums
+        card_big_nums = self.pile[0].getBigNum(self.reverse,9)
+        self.elements['oMiddle'] = card_big_nums
         self.reverse = not self.reverse
         self.event = ''
             
     def eventSkip(self):
-        if self.displayEffects and not self.simulation:
+        if self.display_effects and not self.simulation:
             hide = False
             if self.players[self.turn].getType() == "Computer":
-                hide = self.hideComputerHands
+                hide = self.hide_computer_hands
             self.elements['Console'] = "Skip Card Placed! Skipping {}'s Turn.".format(self.players[self.turn].getName())
             print(self.drawScreen(hide))
             time.sleep(1)
@@ -964,76 +964,76 @@ class Match:
                 self.elements['P{}Turn'.format(self.turn[-1])] = ''
                 print(self.drawScreen(hide))
                 time.sleep(.3)
-        self.turnComplete = True
+        self.turn_complete = True
         self.event = ''
 
     def eventWildCard(self):
         hide = False
-        if not self.forcedWild:
+        if not self.forced_wild:
             if self.players[self.turn].getType() == 'Human':
                 self.elements['Console'] = 'Wild Card! Specifiy a Color: (B)lue, (R)ed, (G)reen, (Y)ellow'
                 self.elements['Error'] = 'Specifiy A Color'
                 print(self.drawScreen())
-                playerInput = str(input("Color Change: "))
-                checked = self.checkColorInput(playerInput)
+                player_input = str(input("Color Change: "))
+                checked = self.checkColorInput(player_input)
                 while not checked['valid']:
                     if checked['entry'] == '<':
-                        self.handPosition -= 1
-                        if self.handPosition == -1:
-                            self.handPosition = self.players[self.turn].maxScroll
+                        self.hand_position -= 1
+                        if self.hand_position == -1:
+                            self.hand_position = self.players[self.turn].maxScroll
                         self.buildHandVisual(self.turn)
                     elif checked['entry'] == '>':
-                        self.handPosition += 1
-                        if self.handPosition > self.players[self.turn].maxScroll:
-                            self.handPosition = 0
+                        self.hand_position += 1
+                        if self.hand_position > self.players[self.turn].maxScroll:
+                            self.hand_position = 0
                         self.buildHandVisual(self.turn)
                     print(self.drawScreen())
-                    playerInput = str(input("Color Change: "))
-                    checked = self.checkColorInput(playerInput)
+                    player_input = str(input("Color Change: "))
+                    checked = self.checkColorInput(player_input)
             else:
-                hide = self.hideComputerHands
+                hide = self.hide_computer_hands
                 checked = self.checkColorInput(self.players[self.turn].getWildColor())
-            self.wildColorChange = checked['entry']
+            self.wild_color_change = checked['entry']
         else:
-            self.wildColorChange = self.checkColorInput(random.choice(('r','b','g','y')))['entry']
-            self.forcedWild = False
-        self.currentColor = self.wildColorChange
+            self.wild_color_change = self.checkColorInput(random.choice(('r','b','g','y')))['entry']
+            self.forced_wild = False
+        self.current_color = self.wild_color_change
         self.elements['Error'] = ""
-        if self.displayEffects and not self.simulation:
+        if self.display_effects and not self.simulation:
             self.elements['Console'] = 'Wild Card! Changing Color.'
             seed = 1
             for i in range(10):
                 i #unused
                 if seed > 4:
                     seed = 1
-                print(self.drawScreen(hide,wildSeed=seed))
+                print(self.drawScreen(hide,wild_seed=seed))
                 time.sleep(.1)
                 seed += 1
-        self.pile[0].changeColor(self.wildColorChange)
-        self.wildColorChange = ''
-        cardBigNums = self.pile[0].getBigNum(self.reverse)
+        self.pile[0].changeColor(self.wild_color_change)
+        self.wild_color_change = ''
+        card_big_nums = self.pile[0].getBigNum(self.reverse)
         self.elements['oHeader'] = '{}\u2666\u2666\u2666=========\u2666\u2666\u2666\033[0m\t'.format(self.pile[0].getColorCode())
-        self.elements['oMiddle'] = cardBigNums
+        self.elements['oMiddle'] = card_big_nums
         self.event = ''
         
     def eventDraw(self):
-        self.players[self.turn].addForceDraw(self.drawAmount)
-        self.drawAmount = 0
+        self.players[self.turn].addForceDraw(self.draw_amount)
+        self.draw_amount = 0
         self.event = ''
 
-    def dealCard(self, playerID):
+    def dealCard(self, player_id):
         
         card = self.deck.draw()
-        self.players[playerID].addCard(card)
+        self.players[player_id].addCard(card)
         
         ### Adjust Hand Visual ###
-        self.players[playerID].maxScroll = math.ceil((self.players[playerID].getCardNum() / 10)-1)
-        self.handPosition = self.players[playerID].maxScroll
-        self.buildHandVisual(playerID)
+        self.players[player_id].maxScroll = math.ceil((self.players[player_id].getCardNum() / 10)-1)
+        self.hand_position = self.players[player_id].maxScroll
+        self.buildHandVisual(player_id)
         
         ### Adjust Player Tile ###
-        keyStringCards = 'P{}Cards'
-        self.elements[keyStringCards.format(playerID[-1])] = '  '+(' '*(3-len(str(self.players[playerID].getCardNum()))))+str(self.players[playerID].getCardNum())+' Cards'
+        key_string_cards = 'P{}Cards'
+        self.elements[key_string_cards.format(player_id[-1])] = '  '+(' '*(3-len(str(self.players[player_id].getCardNum()))))+str(self.players[player_id].getCardNum())+' Cards'
         
         ### Adjust Deck ###
         self.elements['DNum'] = len(self.deck)
@@ -1052,45 +1052,45 @@ class Match:
             card = self.deck.draw()
             self.elements['DNum'] = len(self.deck)
             
-        cardColor = card.getColorCode()
-        cardBigNums = card.getBigNum(self.reverse)
+        card_color = card.getColorCode()
+        card_big_nums = card.getBigNum(self.reverse)
         
-        self.currentColor = card.getColor()
-        self.currentValue = card.getValue()
+        self.current_color = card.getColor()
+        self.current_value = card.getValue()
         
         self.pile.insert(card)
-        self.elements['oHeader'] = '{}\u2666\u2666\u2666=========\u2666\u2666\u2666\033[0m\t'.format(cardColor)
-        self.elements['oMiddle'] = cardBigNums
+        self.elements['oHeader'] = '{}\u2666\u2666\u2666=========\u2666\u2666\u2666\033[0m\t'.format(card_color)
+        self.elements['oMiddle'] = card_big_nums
         
         if len(self.pile) > 1:
-            previousCard = self.pile[1]
-            previousCardColor = previousCard.getColorCode()
-            self.elements['uHeader'] = '{}      \u2666\u2666\u2666=========\u2666\u2666\u2666\033[0m\t\t'.format(previousCardColor)
-            self.elements['uMiddle'] = '{}| |\033[0m'.format(previousCardColor)
-            self.elements['uLower'] = '{}\u2666\u2666\u2666\033[0m'.format(previousCardColor)
+            previous_card = self.pile[1]
+            previous_card_color = previous_card.getColorCode()
+            self.elements['uHeader'] = '{}      \u2666\u2666\u2666=========\u2666\u2666\u2666\033[0m\t\t'.format(previous_card_color)
+            self.elements['uMiddle'] = '{}| |\033[0m'.format(previous_card_color)
+            self.elements['uLower'] = '{}\u2666\u2666\u2666\033[0m'.format(previous_card_color)
             
-        if self.currentColor == 'wild':
+        if self.current_color == 'wild':
             self.event = 'wild'
         
-        if self.currentValue == 'X':
+        if self.current_value == 'X':
             self.event = 'skip'
-        elif self.currentValue == 'R':
+        elif self.current_value == 'R':
             if len(self.players) > 2:
                 self.event = 'reverse'
             else:
                 self.event = 'skip'
-        elif self.currentValue == '+4':
-                self.drawAmount = 4
-        elif self.currentValue == '+2':
-                self.drawAmount = 2
+        elif self.current_value == '+4':
+                self.draw_amount = 4
+        elif self.current_value == '+2':
+                self.draw_amount = 2
         self.passes = 0
                 
-    def extractCard(self, playerID, index):
-        card = self.players[playerID].removeCard(index)
-        if self.players[playerID].getCardNum() == 0:
-            self.matchComplete = True
-            self.winnerID = self.turn
-        self.adjustCardAmount(playerID)
+    def extractCard(self, player_id, index):
+        card = self.players[player_id].removeCard(index)
+        if self.players[player_id].getCardNum() == 0:
+            self.match_complete = True
+            self.winner_id = self.turn
+        self.adjustCardAmount(player_id)
         return card
     
     def enterBreak(self):
@@ -1099,23 +1099,23 @@ class Match:
         return
             
     def nextTurn(self):
-        self.turnComplete = False
-        self.handPosition = 0
-        turnType = self.players[self.turn].getType()
+        self.turn_complete = False
+        self.hand_position = 0
+        turn_type = self.players[self.turn].getType()
         self.players[self.turn].beginTurn()
         ### Prepare Hand Visuals ###
         
-        self.elements['HName'] = self.handTitles[self.turn]
+        self.elements['HName'] = self.hand_titles[self.turn]
         self.buildHandVisual(self.turn)
         
         if self.event == 'skip':
             self.eventSkip()
-        elif self.drawAmount > 0:
+        elif self.draw_amount > 0:
             self.eventDraw()
         
-        while not self.turnComplete:
-            if turnType == 'Human':
-                self.players[self.turn].getLegalCards(self.currentColor, self.currentValue, self.zeroChange)
+        while not self.turn_complete:
+            if turn_type == 'Human':
+                self.players[self.turn].getLegalCards(self.current_color, self.current_value, self.zero_change)
                 if len(self.deck) > 0:
                     self.elements['Console'] = 'Select a card, (D)raw, or (P)ause.'
                 else:
@@ -1124,94 +1124,94 @@ class Match:
                 if self.players[self.turn].getForceDraws() > 0:
                     self.elements['Error'] = 'Draw Card Played! Draw {} cards.'.format(self.players[self.turn].getForceDraws())
                 print(self.drawScreen())
-                playerInput = str(input("\033[97mSelection: \033[92m"))
-                checked = self.checkInput(playerInput)
+                player_input = str(input("\033[97mSelection: \033[92m"))
+                checked = self.checkInput(player_input)
                 while not checked['valid']:
                     print(self.drawScreen())
-                    playerInput = str(input("\033[97mSelection: \033[92m"))
-                    checked = self.checkInput(playerInput)
+                    player_input = str(input("\033[97mSelection: \033[92m"))
+                    checked = self.checkInput(player_input)
     
-                playerInput = checked['entry']
+                player_input = checked['entry']
                 
-                if playerInput == '<':
-                    self.handPosition -= 1
-                    if self.handPosition == -1:
-                        self.handPosition = self.players[self.turn].maxScroll
+                if player_input == '<':
+                    self.hand_position -= 1
+                    if self.hand_position == -1:
+                        self.hand_position = self.players[self.turn].maxScroll
                     self.buildHandVisual(self.turn)
-                elif playerInput == '>':
-                    self.handPosition += 1
-                    if self.handPosition > self.players[self.turn].maxScroll:
-                        self.handPosition = 0
+                elif player_input == '>':
+                    self.hand_position += 1
+                    if self.hand_position > self.players[self.turn].maxScroll:
+                        self.hand_position = 0
                     self.buildHandVisual(self.turn)
-                elif playerInput == 'd':
+                elif player_input == 'd':
                     if len(self.deck) > 0:
                         self.elements['Error'] = ''
                         self.dealCard(self.turn)
                     else:
                         self.elements['Error'] = "Cannot Draw. Deck is Empty"
-                elif playerInput == 'p':
-                    pauseOutput = self.pauseScreen()
-                    if pauseOutput == 'quit':
-                        self.matchComplete = True
-                        self.turnComplete = True
-                        self.winnerID = 'play1'
-                        self.matchAbort = True
-                elif playerInput == 's':
+                elif player_input == 'p':
+                    pause_output = self.pauseScreen()
+                    if pause_output == 'quit':
+                        self.match_complete = True
+                        self.turn_complete = True
+                        self.winner_id = 'play1'
+                        self.match_abort = True
+                elif player_input == 's':
                     if len(self.deck) > 0:
                         self.elements['Error'] = "Cannot pass until Deck is empty."
                     elif len(self.players[self.turn].getAllValidCards()) > 0:
                         self.elements['Error'] = "Cannot pass while having playable cards."
                     else:
-                        self.turnComplete = True
+                        self.turn_complete = True
                         self.passes += 1
-                        if self.passes == self.passMax:
-                            self.forcedWild = True
+                        if self.passes == self.pass_max:
+                            self.forced_wild = True
                             self.event = 'wild'
                             self.passes = 0
-                elif playerInput.isnumeric():
+                elif player_input.isnumeric():
                     if self.players[self.turn].getForceDraws() == 0:
-                        cardCheck = self.players[self.turn].checkCard(playerInput)
-                        if cardCheck in self.players[self.turn].getAllValidCards():
-                            card = self.extractCard(self.turn, playerInput)
+                        card_check = self.players[self.turn].checkCard(player_input)
+                        if card_check in self.players[self.turn].getAllValidCards():
+                            card = self.extractCard(self.turn, player_input)
                             self.placeCard(card)
                             self.elements['Error'] = ""
-                            self.turnComplete = True
+                            self.turn_complete = True
                         else:
-                            self.elements['Error'] = "Card Doesn't Match The Color {} or Value {}!".format(self.currentColor, self.currentValue)
+                            self.elements['Error'] = "Card Doesn't Match The Color {} or Value {}!".format(self.current_color, self.current_value)
                     else:
                         pass
                     
-            elif turnType == 'Computer':
+            elif turn_type == 'Computer':
                 self.elements['Console'] = '{}\'s Turn'.format(self.players[self.turn].getName())
-                print(self.drawScreen(self.hideComputerHands))
+                print(self.drawScreen(self.hide_computer_hands))
                 if not self.simulation:
-                    time.sleep(self.computerSpeed)
+                    time.sleep(self.computer_speed)
                 #str(input())
                 while (True):
-                    if self.displayEffects and not self.simulation:
+                    if self.display_effects and not self.simulation:
                         time.sleep(.2)
                     if self.players[self.turn].getForceDraws() > 0 and len(self.deck) > 0:
-                        cardIndex = 'd'
+                        card_index = 'd'
                     else:
-                        cardIndex = self.players[self.turn].think(self)
-                    if cardIndex.isnumeric():
-                        card = self.extractCard(self.turn, int(cardIndex))
-                        if card.getColor() != self.currentColor:
+                        card_index = self.players[self.turn].think(self)
+                    if card_index.isnumeric():
+                        card = self.extractCard(self.turn, int(card_index))
+                        if card.getColor() != self.current_color:
                             self.resetDrawBool()
                         self.placeCard(card)
-                        self.turnComplete = True
+                        self.turn_complete = True
                         break
                     else:
-                        if cardIndex == 'd':
+                        if card_index == 'd':
                             if len(self.deck) > 0:
                                 self.dealCard(self.turn)
-                                print(self.drawScreen(self.hideComputerHands))
+                                print(self.drawScreen(self.hide_computer_hands))
                             else:
-                                self.turnComplete = True
+                                self.turn_complete = True
                                 self.players[self.turn].removeForceDraw()
                                 self.passes += 1
-                                if self.passes == self.passMax:
-                                    self.forcedWild = True
+                                if self.passes == self.pass_max:
+                                    self.forced_wild = True
                                     self.event = 'wild'
                                     self.passes = 0
                                 break
@@ -1229,22 +1229,22 @@ class Match:
         self.turn = self.getNextTurn()
         self.elements['P{}Turn'.format(self.turn[-1])] = '\033[93m'
 
-    def drawScreen(self, hide=False, wildSeed=0):
+    def drawScreen(self, hide=False, wild_seed=0):
         if self.simulation:
             return ''
-        colorCombos = {
+        color_combos = {
             1 : ['\033[91m','\033[93m','\033[92m','\033[94m'],
             2 : ['\033[94m','\033[91m','\033[93m','\033[92m'],
             3 : ['\033[92m','\033[94m','\033[91m','\033[93m'],
             4 : ['\033[93m','\033[92m','\033[94m','\033[91m'] }
-        currentTurn = self.turn
-        if currentTurn == '':
-            currentTurn = self.turnList[-1]
+        current_turn = self.turn
+        if current_turn == '':
+            current_turn = self.turn_list[-1]
             hide = True
-        if wildSeed != 0:
-            colorMod = colorCombos[wildSeed]
+        if wild_seed != 0:
+            color_mod = color_combos[wild_seed]
         else:
-            colorMod = ['','','','']
+            color_mod = ['','','','']
 
         self.clearShell()
         screenout = ''
@@ -1257,22 +1257,22 @@ class Match:
         screenout += '\t\t\t\t\t\t'     +        ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P1Turn'])
         screenout += '\033[97mDeck:\t\t'        +       '{}'.format(self.elements['uHeader'])       +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P1Turn'],self.elements['P1Name'])
         screenout += '\033[97m{} Cards'.format(self.elements['DNum'])       +       '{}'.format(self.elements['PostDNum'])+'\t'     +       '{}'.format(self.elements['uHeader'])       +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P1Turn'],self.elements['P1Cards'])
-        screenout += '\t\t      '       +      '{}'.format(self.elements['uMiddle'])        +       '\033[97m{}{}'.format(colorMod[0],self.elements['oHeader'])     +      ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P1Turn'])
-        screenout += '\033[97m  _+_ \t\t      '     +       '{}'.format(self.elements['uMiddle'])                                                                                                   +       '\033[97m{}{}'.format(colorMod[1],self.elements['oHeader'])         +       ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P2Turn'])                                                                                  
-        screenout += '\033[97m | '      +       '\033[92m{}\033[0m'.format(self.elements['Deck'][0])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uMiddle'])       +       '\033[97m{}{}'.format(colorMod[2],self.elements['oMiddle'][0])      +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P2Turn'],self.elements['P2Name'])
-        screenout += '\033[97m | '      +       '\033[92m{}\033[0m'.format(self.elements['Deck'][1])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uMiddle'])       +       '\033[97m{}{}'.format(colorMod[3],self.elements['oMiddle'][1])      +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P2Turn'],self.elements['P2Cards'])
-        screenout += '\033[97m | '      +       '\033[92m{}\033[0m'.format(self.elements['Deck'][2])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uMiddle'])       +       '\033[97m{}{}'.format(colorMod[0],self.elements['oMiddle'][2])      +       ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P2Turn'])
-        screenout += '\033[97m | '      +       '\033[93m{}\033[0m'.format(self.elements['Deck'][3])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uMiddle'])       +       '\033[97m{}{}'.format(colorMod[1],self.elements['oMiddle'][3])      +       ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P3Turn'])
-        screenout += '\033[97m | '      +       '\033[93m{}\033[0m'.format(self.elements['Deck'][4])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uMiddle'])       +       '\033[97m{}{}'.format(colorMod[2],self.elements['oMiddle'][4])      +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P3Turn'],self.elements['P3Name'])
-        screenout += '\033[97m | '      +       '\033[93m{}\033[0m'.format(self.elements['Deck'][5])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uMiddle'])       +       '\033[97m{}{}'.format(colorMod[3],self.elements['oMiddle'][5])      +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P3Turn'],self.elements['P3Cards'])
-        screenout += '\033[97m | '      +       '\033[91m{}\033[0m'.format(self.elements['Deck'][6])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uLower'])        +       '\033[97m{}{}'.format(colorMod[0],self.elements['oMiddle'][6])      +       ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P3Turn'])
-        screenout += '\033[97m | '      +       '\033[91m{}\033[0m'.format(self.elements['Deck'][7])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uLower'])        +       '\033[97m{}{}'.format(colorMod[1],self.elements['oMiddle'][7])      +       ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P4Turn'])
-        screenout += '\033[97m |_'      +     '\033[91m{}\033[0m'.format(self.elements['Deck'][8])          +        '\033[97m_|\t\t         '                                                      +      '\033[97m{}{}'.format(colorMod[2],self.elements['oHeader'])          +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P4Turn'],self.elements['P4Name'])
-        screenout += '\033[97m\t\t         '    +                                                                                                                                                                   '\033[97m{}{}'.format(colorMod[3],self.elements['oHeader'])         +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P4Turn'],self.elements['P4Cards'])
+        screenout += '\t\t      '       +      '{}'.format(self.elements['uMiddle'])        +       '\033[97m{}{}'.format(color_mod[0],self.elements['oHeader'])     +      ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P1Turn'])
+        screenout += '\033[97m  _+_ \t\t      '     +       '{}'.format(self.elements['uMiddle'])                                                                                                   +       '\033[97m{}{}'.format(color_mod[1],self.elements['oHeader'])         +       ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P2Turn'])                                                                                  
+        screenout += '\033[97m | '      +       '\033[92m{}\033[0m'.format(self.elements['Deck'][0])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uMiddle'])       +       '\033[97m{}{}'.format(color_mod[2],self.elements['oMiddle'][0])      +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P2Turn'],self.elements['P2Name'])
+        screenout += '\033[97m | '      +       '\033[92m{}\033[0m'.format(self.elements['Deck'][1])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uMiddle'])       +       '\033[97m{}{}'.format(color_mod[3],self.elements['oMiddle'][1])      +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P2Turn'],self.elements['P2Cards'])
+        screenout += '\033[97m | '      +       '\033[92m{}\033[0m'.format(self.elements['Deck'][2])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uMiddle'])       +       '\033[97m{}{}'.format(color_mod[0],self.elements['oMiddle'][2])      +       ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P2Turn'])
+        screenout += '\033[97m | '      +       '\033[93m{}\033[0m'.format(self.elements['Deck'][3])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uMiddle'])       +       '\033[97m{}{}'.format(color_mod[1],self.elements['oMiddle'][3])      +       ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P3Turn'])
+        screenout += '\033[97m | '      +       '\033[93m{}\033[0m'.format(self.elements['Deck'][4])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uMiddle'])       +       '\033[97m{}{}'.format(color_mod[2],self.elements['oMiddle'][4])      +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P3Turn'],self.elements['P3Name'])
+        screenout += '\033[97m | '      +       '\033[93m{}\033[0m'.format(self.elements['Deck'][5])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uMiddle'])       +       '\033[97m{}{}'.format(color_mod[3],self.elements['oMiddle'][5])      +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P3Turn'],self.elements['P3Cards'])
+        screenout += '\033[97m | '      +       '\033[91m{}\033[0m'.format(self.elements['Deck'][6])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uLower'])        +       '\033[97m{}{}'.format(color_mod[0],self.elements['oMiddle'][6])      +       ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P3Turn'])
+        screenout += '\033[97m | '      +       '\033[91m{}\033[0m'.format(self.elements['Deck'][7])        +       '\033[97m |\t\t      '      +       '{}'.format(self.elements['uLower'])        +       '\033[97m{}{}'.format(color_mod[1],self.elements['oMiddle'][7])      +       ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P4Turn'])
+        screenout += '\033[97m |_'      +     '\033[91m{}\033[0m'.format(self.elements['Deck'][8])          +        '\033[97m_|\t\t         '                                                      +      '\033[97m{}{}'.format(color_mod[2],self.elements['oHeader'])          +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P4Turn'],self.elements['P4Name'])
+        screenout += '\033[97m\t\t         '    +                                                                                                                                                                   '\033[97m{}{}'.format(color_mod[3],self.elements['oHeader'])         +       ' \033[97m{}|{}|\033[0m\n'.format(self.elements['P4Turn'],self.elements['P4Cards'])
         screenout += '\t\t\t\t\t\t'     +       ' \033[97m{}\u2666-----------\u2666\033[0m\n'.format(self.elements['P4Turn'])
         screenout += "\033[97m{}".format(self.elements['HName'])        +       "\t\t\t\t {}\n".format(self.elements['HVisual'])
         screenout += '\033[97m===============================================================\n'
-        screenout += self.players[currentTurn].getHand(self.handPosition,hide)
+        screenout += self.players[current_turn].getHand(self.hand_position,hide)
         screenout += '\033[91m{}\033[0m'.format(self.elements['Error'])
         return screenout
     
@@ -1296,30 +1296,30 @@ class Match:
                 
     
     def isComplete(self):
-        return self.matchComplete
+        return self.match_complete
     
     def next(self):
         self.turn = self.getNextTurn()
     
-    def getNextTurn(self, forceReverse=False):
-        if forceReverse:
+    def getNextTurn(self, force_reverse=False):
+        if force_reverse:
             reverse = not self.reverse
         else:
             reverse = self.reverse
-        currentIndex = self.turnList.index(self.turn)
+        current_index = self.turn_list.index(self.turn)
         if not reverse:
-            if (currentIndex + 1) == len(self.turnList):
-                return self.turnList[0]
+            if (current_index + 1) == len(self.turn_list):
+                return self.turn_list[0]
             else:
-                return self.turnList[currentIndex+1]
+                return self.turn_list[current_index+1]
         else:
-            if currentIndex == 0:
-                return self.turnList[len(self.turnList) - 1]
+            if current_index == 0:
+                return self.turn_list[len(self.turn_list) - 1]
             else:
-                return self.turnList[currentIndex-1]
+                return self.turn_list[current_index-1]
             
-    def getPlayer(self, playerID):
-        return self.players[playerID]
+    def getPlayer(self, player_id):
+        return self.players[player_id]
     
     def resetDrawBool(self):
         for identity in self.players:
@@ -1343,41 +1343,41 @@ def Uno(debugging=False):
             
             selection = str(input('\033[97mSelection: \033[92m'))
             while selection not in ['1', '2', '3', '4', '5']:
-                gs.mainMenuError = "Invalid Selection"
+                gs.main_menu_error = "Invalid Selection"
                 print(drawMainMenu(gs))
                 selection = str(input('\033[97mSelection: \033[92m'))
                 
             if selection == '1':
                 if gs.canBegin():
-                    gs.mainMenuError = ""
+                    gs.main_menu_error = ""
                     gs.finalizePlayers()
                     gs = playMatch(gs)
                 else:
-                    gs.mainMenuError = "Two Players Required to Begin"
+                    gs.main_menu_error = "Two Players Required to Begin"
 
             elif selection == '2':
                 if gs.canAddPlayer():
-                    gs.mainMenuError = ""
+                    gs.main_menu_error = ""
                     gs = addPlayer(gs)
                 else:
-                    gs.mainMenuError = "Max Number of Players Reached"
+                    gs.main_menu_error = "Max Number of Players Reached"
                     
             elif selection == '3':
                 if gs.canAddPlayer():
-                    gs.mainMenuError = ""
+                    gs.main_menu_error = ""
                     gs = addComputer(gs)
                 else:
-                    gs.mainMenuError = "Max Number of Players Reached"
+                    gs.main_menu_error = "Max Number of Players Reached"
 
             elif selection == '4':
                 if gs.canRemovePlayer():
-                    gs.mainMenuError = ""
+                    gs.main_menu_error = ""
                     gs = removePlayer(gs)
                 else:
-                    gs.mainMenuError = "No Players to Remove"
+                    gs.main_menu_error = "No Players to Remove"
 
             elif selection == '5':
-                gs.mainMenuError = ""
+                gs.main_menu_error = ""
                 gs = settingsMenu(gs)
 
             else:
@@ -1395,30 +1395,30 @@ def Uno(debugging=False):
             
     def addPlayer(gs):
         colors = ['\033[91m','\033[94m', '\033[92m', '\033[93m']
-        nameOkay = False
-        playerNum = gs.getPlayerNum() + 1
-        colorIndex = playerNum - 1
-        message = "\033[97mPlease Enter Player {}'s Name: {}".format(playerNum, colors[colorIndex])
+        name_okay = False
+        player_num = gs.getPlayerNum() + 1
+        color_index = player_num - 1
+        message = "\033[97mPlease Enter Player {}'s Name: {}".format(player_num, colors[color_index])
         
-        while not nameOkay:
+        while not name_okay:
             print(drawMainMenu(gs))
             name = str(input(message)).title()
             if len(name) > 11:
-                gs.mainMenuError = "Name Must Be 11 Characters or Less!"
+                gs.main_menu_error = "Name Must Be 11 Characters or Less!"
             elif len(name) == 0:
-                gs.mainMenuError = ""
+                gs.main_menu_error = ""
                 return gs
             else:
-                nameOkay = True
-                for player in gs.playerStaging:
+                name_okay = True
+                for player in gs.player_staging:
                     if player.getName() == name:
-                        nameOkay = False
-                if nameOkay == False or name in GameSettings.computerNames:
-                    gs.mainMenuError = "Name Cannot Match Another Player's Name!"
+                        name_okay = False
+                if name_okay == False or name in GameSettings.computer_names:
+                    gs.main_menu_error = "Name Cannot Match Another Player's Name!"
                         
         p = Player(name)
         gs.addPlayer(p)
-        gs.mainMenuError = ""
+        gs.main_menu_error = ""
         
         return gs
     
@@ -1435,25 +1435,25 @@ def Uno(debugging=False):
         clearShell()
         
         complete = False
-        playerNum = gs.getPlayerNum()
-        message = "\033[97mPlease Enter Player Number to Remove: \033[91m".format(playerNum)
+        player_num = gs.getPlayerNum()
+        message = "\033[97mPlease Enter Player Number to Remove: \033[91m".format(player_num)
         
         while (not complete):
             print(drawMainMenu(gs))
             number = str(input(message)) 
             if len(number) == 0:
-                gs.mainMenuError = ""
+                gs.main_menu_error = ""
                 return gs
             try:
                 number = int(number)
-                if 0 < number <= playerNum:
+                if 0 < number <= player_num:
                     complete = True
                 else:
-                    gs.mainMenuError = "Invalid Player Number!"
+                    gs.main_menu_error = "Invalid Player Number!"
             except:
-                gs.mainMenuError = "Please Enter the Player Number, not Name!"
+                gs.main_menu_error = "Please Enter the Player Number, not Name!"
         
-        gs.mainMenuError = ""
+        gs.main_menu_error = ""
         gs.removePlayer(number)
         return gs
     
@@ -1463,9 +1463,9 @@ def Uno(debugging=False):
             sys.stdout.flush()
             clearShell()
             print('\n\t\tSettings')
-            print('\n\t1. Draw Effects\t\t\t{}'.format(gs.displayEffects))
-            print('\t2. Hide Computer Hands\t\t{}'.format(gs.hideComputerHands))
-            print('\t3. Computer Speed\t\t{}'.format(gs.computerSpeed.title()))
+            print('\n\t1. Draw Effects\t\t\t{}'.format(gs.display_effects))
+            print('\t2. Hide Computer Hands\t\t{}'.format(gs.hide_computer_hands))
+            print('\t3. Computer Speed\t\t{}'.format(gs.computer_speed.title()))
             #print('\t4. Zero Card Changes Color\t{}'.format(gs.zeroChange))
             #print('\t5. Run Simulations\t\t{}'.format(gs.computerSimulation))
             print('\n\tA. Exit')
@@ -1476,10 +1476,10 @@ def Uno(debugging=False):
                 selection = str(input('\nSelection: ')).upper()
                 
             if selection == '1':
-                gs.displayEffects = not gs.displayEffects
+                gs.display_effects = not gs.display_effects
                 
             elif selection == '2':
-                gs.hideComputerHands = not gs.hideComputerHands
+                gs.hide_computer_hands = not gs.hide_computer_hands
                 
             elif selection == '3':
                 gs.changeComputerSpeed()
@@ -1496,38 +1496,38 @@ def Uno(debugging=False):
     def drawMainMenu(gs):
         clearShell()
         gs.compileMainMenuElements()
-        menuElements = gs.getMainMenuElements()
+        menu_elements = gs.getMainMenuElements()
         screenout = ''
         screenout += '\t\t\033[94m      || ||\033[92m ||\ ||  \033[91m// \\\\\n\033[0m'
         screenout += '\t\t\033[94m      || ||\033[92m ||\\\|| \033[91m((   ))\n\033[0m'
         screenout += '\t\t\033[94m      \\\ //\033[92m || \|| \033[91m \\\ //\n\033[0m'
         screenout += '\033[97m===============================================================\033[0m\n'
-        screenout += "{}1-----------------------------1\033[0m {}2-----------------------------2\033[0m\n".format(menuElements['play1box'],menuElements['play2box'])
-        screenout += "{}|{}|\033[0m {}|{}|\033[0m\n".format(menuElements['play1box'],menuElements['play1row1'],menuElements['play2box'],menuElements['play2row1'])
-        screenout += "{}|{}|\033[0m {}|{}|\033[0m\n".format(menuElements['play1box'],menuElements['play1row2'],menuElements['play2box'],menuElements['play2row2'])
-        screenout += "{}1-----------------------------1\033[0m {}2-----------------------------2\033[0m\n".format(menuElements['play1box'],menuElements['play2box'])
-        screenout += "{}3-----------------------------3\033[0m {}4-----------------------------4\033[0m\n".format(menuElements['play3box'],menuElements['play4box'])
-        screenout += "{}|{}|\033[0m {}|{}|\033[0m\n".format(menuElements['play3box'],menuElements['play3row1'],menuElements['play4box'],menuElements['play4row1'])
-        screenout += "{}|{}|\033[0m {}|{}|\033[0m\n".format(menuElements['play3box'],menuElements['play3row2'],menuElements['play4box'],menuElements['play4row2'])
-        screenout += "{}3-----------------------------3\033[0m {}4-----------------------------4\033[0m\n".format(menuElements['play3box'],menuElements['play4box'])
+        screenout += "{}1-----------------------------1\033[0m {}2-----------------------------2\033[0m\n".format(menu_elements['play1box'],menu_elements['play2box'])
+        screenout += "{}|{}|\033[0m {}|{}|\033[0m\n".format(menu_elements['play1box'],menu_elements['play1row1'],menu_elements['play2box'],menu_elements['play2row1'])
+        screenout += "{}|{}|\033[0m {}|{}|\033[0m\n".format(menu_elements['play1box'],menu_elements['play1row2'],menu_elements['play2box'],menu_elements['play2row2'])
+        screenout += "{}1-----------------------------1\033[0m {}2-----------------------------2\033[0m\n".format(menu_elements['play1box'],menu_elements['play2box'])
+        screenout += "{}3-----------------------------3\033[0m {}4-----------------------------4\033[0m\n".format(menu_elements['play3box'],menu_elements['play4box'])
+        screenout += "{}|{}|\033[0m {}|{}|\033[0m\n".format(menu_elements['play3box'],menu_elements['play3row1'],menu_elements['play4box'],menu_elements['play4row1'])
+        screenout += "{}|{}|\033[0m {}|{}|\033[0m\n".format(menu_elements['play3box'],menu_elements['play3row2'],menu_elements['play4box'],menu_elements['play4row2'])
+        screenout += "{}3-----------------------------3\033[0m {}4-----------------------------4\033[0m\n".format(menu_elements['play3box'],menu_elements['play4box'])
         screenout += "\033[97m===============================================================\033[0m\n"
-        screenout += "  {}\u2666---------------------------\u2666\033[0m \u2666===========================\u2666\n".format(menuElements['beginBox'])
-        screenout += "  {}|1.       Begin Match       |\033[0m |        High Scores        |\n".format(menuElements['beginBox'])
-        screenout += "  {}\u2666---------------------------\u2666\033[0m \u2666---------------------------\u2666\n".format(menuElements['beginBox'])
-        screenout += "  {}\u2666---------------------------\u2666\033[0m |                           |\n".format(menuElements['addBox'])
-        screenout += "  {}|2.       Add Player        |\033[0m |                           |\n".format(menuElements['addBox'])
-        screenout += "  {}\u2666---------------------------\u2666\033[0m |                           |\n".format(menuElements['addBox'])
-        screenout += "  {}\u2666---------------------------\u2666\033[0m |                           |\n".format(menuElements['addBox'])
-        screenout += "  {}|3.      Add Computer       |\033[0m |                           |\n".format(menuElements['addBox'])
-        screenout += "  {}\u2666---------------------------\u2666\033[0m |                           |\n".format(menuElements['addBox'])
-        screenout += "  {}\u2666---------------------------\u2666\033[0m |                           |\n".format(menuElements['removeBox'])
-        screenout += "  {}|4.      Remove Player      |\033[0m |                           |\n".format(menuElements['removeBox'])
-        screenout += "  {}\u2666---------------------------\u2666\033[0m |                           |\n".format(menuElements['removeBox'])
+        screenout += "  {}\u2666---------------------------\u2666\033[0m \u2666===========================\u2666\n".format(menu_elements['beginBox'])
+        screenout += "  {}|1.       Begin Match       |\033[0m |        High Scores        |\n".format(menu_elements['beginBox'])
+        screenout += "  {}\u2666---------------------------\u2666\033[0m \u2666---------------------------\u2666\n".format(menu_elements['beginBox'])
+        screenout += "  {}\u2666---------------------------\u2666\033[0m |                           |\n".format(menu_elements['addBox'])
+        screenout += "  {}|2.       Add Player        |\033[0m |                           |\n".format(menu_elements['addBox'])
+        screenout += "  {}\u2666---------------------------\u2666\033[0m |                           |\n".format(menu_elements['addBox'])
+        screenout += "  {}\u2666---------------------------\u2666\033[0m |                           |\n".format(menu_elements['addBox'])
+        screenout += "  {}|3.      Add Computer       |\033[0m |                           |\n".format(menu_elements['addBox'])
+        screenout += "  {}\u2666---------------------------\u2666\033[0m |                           |\n".format(menu_elements['addBox'])
+        screenout += "  {}\u2666---------------------------\u2666\033[0m |                           |\n".format(menu_elements['removeBox'])
+        screenout += "  {}|4.      Remove Player      |\033[0m |                           |\n".format(menu_elements['removeBox'])
+        screenout += "  {}\u2666---------------------------\u2666\033[0m |                           |\n".format(menu_elements['removeBox'])
         screenout += "  \033[97m\u2666---------------------------\u2666\033[0m |                           |\n"
         screenout += "  \033[97m|5.        Settings         |\033[0m |                           |\n"
         screenout += "  \033[97m\u2666---------------------------\u2666\033[0m \u2666===========================\u2666\n"
         screenout += "\033[97m===============================================================\033[0m\n"
-        screenout += '\033[91m{}\033[0m'.format(gs.mainMenuError)
+        screenout += '\033[91m{}\033[0m'.format(gs.main_menu_error)
         return screenout
     
     mainMenu()
